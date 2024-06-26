@@ -42,4 +42,8 @@ public class GraphViewer {
 
     System.out.println("}");
   }
+
+  public ArrayList<String> getNodes() {
+    return this.nodes;
+  }
 }
