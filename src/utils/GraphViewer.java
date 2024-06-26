@@ -20,7 +20,7 @@ public class GraphViewer {
     from = String.format("\"%s\"", from);
     to = String.format("\"%s\"", to);
     
-    this.connections.add(from + "--" + to);
+    this.connections.add(from + "->" + to);
   }
 
   public void addNode(String node) {
@@ -31,7 +31,7 @@ public class GraphViewer {
   }
 
   public void print() {
-    System.out.println("graph " + this.name + " {");
+    System.out.println("digraph " + this.name + " {");
     
     for (String n : this.nodes) {
       System.out.println(n);
