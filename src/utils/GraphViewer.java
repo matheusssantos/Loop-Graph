@@ -14,16 +14,17 @@ public class GraphViewer {
   }
 
   public void newConnection(String from, String to) {
-    from = String.format("\"%s\"", from);
-    to = String.format("\"%s\"", to);
-
     this.addNode(from);
     this.addNode(to);
+
+    from = String.format("\"%s\"", from);
+    to = String.format("\"%s\"", to);
     
     this.connections.add(from + "--" + to);
   }
 
-  private void addNode(String node) {
+  public void addNode(String node) {
+    node = String.format("\"%s\"", node);
     if (!this.nodes.contains(node)) {
       this.nodes.add(node);
     }

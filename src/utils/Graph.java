@@ -15,6 +15,7 @@ public class Graph {
 
   public void addVertice(String vertice) {
     this.vertices.putIfAbsent(vertice, new ArrayList<>());
+    this.graphViewer.addNode(vertice);
   }
 
   public void addAresta(String vertice1, String vertice2) {
