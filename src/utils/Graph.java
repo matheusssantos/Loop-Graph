@@ -1,12 +1,16 @@
 package utils;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Stack;
 
 public class Graph {
-  
-  HashMap<String, ArrayList<String>> vertices;
-  GraphViewer graphViewer;
+
+  private HashMap<String, ArrayList<String>> vertices;
+  private GraphViewer graphViewer;
 
   public Graph() {
     this.vertices = new HashMap<>();
@@ -22,7 +26,6 @@ public class Graph {
     this.addVertice(vertice1);
     this.addVertice(vertice2);
     vertices.get(vertice1).add(vertice2);
-    vertices.get(vertice2).add(vertice1);
     this.graphViewer.newConnection(vertice1, vertice2);
   }
 
@@ -38,28 +41,65 @@ public class Graph {
     return this.vertices;
   }
 
-  public void search(String origem) {
-    ArrayList<String> visitados = new ArrayList<>();
-    int aux = this.search(origem, visitados, 1, 0);
-    System.out.println(aux);
-  }
+  public int findLongestPath() {
+    Stack<String> stack = topologicalSort();
+    HashMap<String, Integer> dist = new HashMap<>();
 
-  private int search(String vertice, ArrayList<String> visitados, int nivel, int bigger) {
-    visitados.add(vertice);
-    ArrayList<String> adjacentes = this.getAdjacentes(vertice);
-    nivel++;
-    
-    for (String vizinho : adjacentes) {
-      if(!visitados.contains(vizinho)) {
-        this.search(vizinho, visitados, nivel, bigger);
-      } else {
+    // Inicializa todas as distâncias como mínimas
+    for (String vertice : vertices.keySet()) {
+      dist.put(vertice, Integer.MIN_VALUE);
+    }
+
+    // A distância do ponto de partida para si mesmo é 0
+    while (!stack.isEmpty()) {
+      String vertice = stack.pop();
+      if (dist.get(vertice) == Integer.MIN_VALUE) {
+        dist.put(vertice, 0);
+      }
+
+      if (dist.get(vertice) != Integer.MIN_VALUE) {
+        for (String adj : getAdjacentes(vertice)) {
+          if (dist.get(adj) < dist.get(vertice) + 1) {
+            dist.put(adj, dist.get(vertice) + 1);
+          }
+        }
       }
     }
 
-    if (nivel > bigger) {
-      bigger = nivel;
-    } 
+    // Encontra a maior distância
+    int maxPath = 0;
+    for (int value : dist.values()) {
+      if (value > maxPath) {
+        maxPath = value;
+      }
+    }
+    return maxPath +1;
+  }
 
-    return bigger;
+  private Stack<String> topologicalSort() {
+    Stack<String> stack = new Stack<>();
+    HashMap<String, Boolean> visited = new HashMap<>();
+
+    for (String vertice : vertices.keySet()) {
+      visited.put(vertice, false);
+    }
+
+    for (String vertice : vertices.keySet()) {
+      if (!visited.get(vertice)) {
+        topologicalSortUtil(vertice, visited, stack);
+      }
+    }
+
+    return stack;
+  }
+
+  private void topologicalSortUtil(String vertice, HashMap<String, Boolean> visited, Stack<String> stack) {
+    visited.put(vertice, true);
+    for (String adj : getAdjacentes(vertice)) {
+      if (!visited.get(adj)) {
+        topologicalSortUtil(adj, visited, stack);
+      }
+    }
+    stack.push(vertice);
   }
 }
